@@ -2,13 +2,34 @@ import glob
 import os
 
 import pandas as pd
-import csv
+
 import pdfkit
+import json
 
-def read_cvs_diveideOrder(primitive_data):
+def read_cvs_diveideOrder(primitive_data, home):
+    column_name = {}
+    header = []
+    items = []
+    with open(os.path.join(home, "config.json"), 'r') as read_file:
+        column_name = json.load(read_file)
+        header = column_name["Header"]
+        items = column_name["Items"]
 
-    #print(list(primitive_data))
-    refind_data = primitive_data[["Order #", "Date",  "Billing Customer", "Shipping Label", "Buyer's Email", "Buyer's Phone #", "Item's Name", "Item's Variant", "Qty", "Notes to Seller"]]
+    header_ref = []
+    item_ref = []
+    for col in header :
+        if col in primitive_data:
+            header_ref.append(col)
+
+    for col in items:
+        if col in primitive_data:
+            item_ref.append(col)
+        else:
+            print(f"ho escluso {col}")
+
+    all_column = header_ref + item_ref
+                    #print(list(primitive_data))
+    refind_data = primitive_data[all_column]
     #seleziona numero ordini e eleiminia duplicati
     ordini = refind_data["Order #"].to_list()
 
@@ -24,87 +45,67 @@ def read_cvs_diveideOrder(primitive_data):
     for i in ordini_indice:
         elenco_ordini_ragruppati.append(refind_data[refind_data["Order #"] == i])
 
-    return elenco_ordini_ragruppati
+    return elenco_ordini_ragruppati, header_ref, item_ref
 
-def scrivi_dizinario(elenco_ordini_ragruppati):
+def scrivi_dizinario(elenco_ordini_ragruppati, header, items):
     ordine1 = elenco_ordini_ragruppati
     ordine_dizionario = {}
-    ordine_dizionario["Order #"]  = ordine1["Order #"].iat[0]
-    ordine_dizionario["data"]  = ordine1["Date"].iat[0]
-    ordine_dizionario["Billing Customer"]  = ordine1["Billing Customer"].iat[0]
-    ordine_dizionario["Shipping Label"]  = ordine1["Shipping Label"].iat[0]
-    ordine_dizionario["Buyer's Email"]  = ordine1["Buyer's Email"].iat[0]
-    ordine_dizionario["Buyer's Phone #"]  = ordine1["Buyer's Phone #"].iat[0]
-    ordine_dizionario["Item's Name"] = ordine1[[ "Item's Name", "Item's Variant", "Qty", "Notes to Seller"]]
+    for name in header:
+        ordine_dizionario[name] = ordine1[name].iat[0]
+
+    ordine_dizionario["Items"] = ordine1[items]
     return ordine_dizionario
 
 
-def scrivi_file_html(ordine_dizionario = None, home = None):
+def scrivi_file_html(ordine_dizionario = None, home = None, header = [], items = [] ):
 
     file_html = os.path.join(home,"html"
                              , f"order{ordine_dizionario['Order #']}.html")
     file_pdf = os.path.join(home,"Pdf"
                              , f"order{ordine_dizionario['Order #']}.pdf")
     with open(file_html, mode='w') as file_out:
-
-        ordine_dizionario["Shipping Label"] = ordine_dizionario["Shipping Label"].replace('/', '<br>')
-
-        file_out.write(f"""
-        <table border=1>
-            <tr>
-                <th>Order #</th>
-                <th>{ordine_dizionario["Order #"]}</th>
-            </tr>
-            <tr>
-                <td>data</td>
-                <td>{ordine_dizionario["data"]}</td>
-            </tr>
-            <tr>
-                <td>Billing Customer</td>
-                <td>{ordine_dizionario["Billing Customer"]}</td>
-            </tr>
-            <tr>
-                <td>Shipping Label</td>
-                <td>S{ordine_dizionario["Shipping Label"]}</td>
-            </tr>
-            <tr>
-                <td>Buyer's Email</td>
-                <td>{ordine_dizionario["Buyer's Email"]}</td>
-            </tr>
-            <tr>
-                <td>Buyer's Phone #</td>
-                <td>{ordine_dizionario["Buyer's Phone #"]}</td>
-            </tr>
-        """)
-
-        file_out.write(f"""
-                        <tr>
-                            <td>Item's Name</td>
-                            <td>Item's Variant</td>
-                            <td>Qty</td>
-                        </tr>
-                            """)
-
-        for column, row in ordine_dizionario["Item's Name"].iterrows():
-            row["Item's Variant"] = row["Item's Variant"].replace('|', '<br>')
+        file_out.write(f"<table border=1>")
+#STAMPA L'EADE
+        for name in header:
             file_out.write(f"""
-                <tr>
-                    <td>{row["Item's Name"]}</td>
-                    <td>{row["Item's Variant"]}</td>
-                    <td>{row["Qty"]}</td>
-                </tr>
-                    """)
-            if f"{row['Notes to Seller']}" != "nan":
+            <tr>
+                <th> {name} </th>
+                <th> {ordine_dizionario[name]} </th>
+            </tr>
+            """)
+
+
+#STAMPA GLI ITEMS
+        file_out.write(f"<tr>")
+        for name in items:
+            if name != "Notes to Seller":
                 file_out.write(f"""
-                                <tr>
-                                    <td>Notes to Seller</td>
-                                    <td>{row["Notes to Seller"]}</td>
-                                </tr>
-                                    """)
+                                <th> {name} </th>
+                            """)
+        file_out.write(f"</tr>")
+
+        for index, row in ordine_dizionario["Items"].iterrows():
+            file_out.write(f"<tr>")
+            for name in items:
+                if name != "Notes to Seller":
+                    file_out.write(f"""
+                                <th> {row[name]} </th>
+                                """)
+
+            file_out.write(f"</tr>")
+            if str(row["Notes to Seller"]) != 'nan':
+                file_out.write(f"<tr>")
+                file_out.write(f"""
+                                <th>Notes to Seller</th>
+                                <th> {row["Notes to Seller"]} </th>
+                                """)
+                file_out.write(f"</tr>")
 
         file_out.write("</table>")
-
     pdfkit.from_file(file_html, file_pdf)
+
+
+
 
 def main():
     home = os.path.dirname(os.path.realpath(__file__))
@@ -120,18 +121,21 @@ def main():
         os.makedirs(os.path.join(home, "Input"))
         print("input")
 
+    if not os.path.exists(os.path.join(home, "Imange")):
+        os.makedirs(os.path.join(home, "Imange"))
+        print("Imange")
 
     directori = os.path.join(home, "Input")
 
     for file in os.listdir(directori):
         if file.endswith(".csv"):
-            primitive_data = pd.read_csv(os.path.join(directori,file))
-            dati = read_cvs_diveideOrder(primitive_data)
+            primitive_data = pd.read_csv(os.path.join(directori,file,))
+            dati, header, items = read_cvs_diveideOrder(primitive_data, home)
             #print(dati)
             i = 0
             for ordine in dati:
-                dizionario = scrivi_dizinario(ordine)
-                scrivi_file_html(ordine_dizionario=dizionario, home = home)
+                dizionario = scrivi_dizinario(ordine, header, items)
+                scrivi_file_html(ordine_dizionario=dizionario, home = home,  header= header, items = items)
                 #scrivi_file_csv(dizionario, i, home)
                 i += 1
         print("yes, I do it")

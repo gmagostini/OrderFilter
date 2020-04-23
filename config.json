@@ -1,0 +1,19 @@
+{
+  "Header" : [
+    "Order #",
+    "Date",
+    "Billing Customer",
+    "Billing Street Name&Number",
+    "Delivery Company Name",
+    "Buyer's Phone #",
+    "Shipping Label",
+    "Buyer's Email"
+  ],
+  "Items" : [
+    "Item's Name",
+    "Item's Variant",
+    "Qty",
+    "Notes to Seller",
+    "Weight"
+  ]
+}
