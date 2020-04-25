@@ -1,5 +1,5 @@
 {
-  "Header" : [
+  "header" : [
     "Order #",
     "Date",
     "Billing Customer",
@@ -9,11 +9,12 @@
     "Shipping Label",
     "Buyer's Email"
   ],
-  "Items" : [
+  "items" : [
     "Item's Name",
     "Item's Variant",
     "Qty",
     "Notes to Seller",
     "Weight"
-  ]
+  ],
+  "image_size" : [200, 200]
 }

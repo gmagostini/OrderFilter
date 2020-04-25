@@ -12,8 +12,9 @@ def read_cvs_diveideOrder(primitive_data, home):
     items = []
     with open(os.path.join(home, "config.json"), 'r') as read_file:
         column_name = json.load(read_file)
-        header = column_name["Header"]
-        items = column_name["Items"]
+        header = column_name["header"]
+        items = column_name["items"]
+        image_size = column_name["image_size"]
 
     header_ref = []
     item_ref = []
@@ -45,7 +46,7 @@ def read_cvs_diveideOrder(primitive_data, home):
     for i in ordini_indice:
         elenco_ordini_ragruppati.append(refind_data[refind_data["Order #"] == i])
 
-    return elenco_ordini_ragruppati, header_ref, item_ref
+    return elenco_ordini_ragruppati, header_ref, item_ref ,image_size
 
 def scrivi_dizinario(elenco_ordini_ragruppati, header, items):
     ordine1 = elenco_ordini_ragruppati
@@ -57,7 +58,7 @@ def scrivi_dizinario(elenco_ordini_ragruppati, header, items):
     return ordine_dizionario
 
 
-def scrivi_file_html(ordine_dizionario = None, home = None, header = [], items = [] ):
+def scrivi_file_html(ordine_dizionario = None, home = None, header = [], items = [], image_size =[80,80] ):
 
     file_html = os.path.join(home,"html"
                              , f"order{ordine_dizionario['Order #']}.html")
@@ -103,20 +104,21 @@ def scrivi_file_html(ordine_dizionario = None, home = None, header = [], items =
                                 <th> {row["Notes to Seller"]} </th>
                                 """)
                 file_out.write(f"</tr>")
-            if  row["Item's Name"] not in  items_name_list:
-                items_name_list.append(row["Item's Name"])
+            name_items = row["Item's Name"]
+            name_items = name_items.replace('/', '')
+            for name_picture in os.listdir(os.path.join(home,"Image")):
+                if name_items in name_picture:
+                    name_picture = os.path.join(home,"Image", name_picture)
+                    print(f"inserisoc immagine {os.path.join(home, 'Image', name_picture)}")
+                    file_out.write(f"<tr>")
+                    file_out.write(f"<th></th>")
+                    file_out.write(f"<th>")
+                    file_out.write(f'<img src = "{name_picture}" height="{image_size[0]} width="{image_size[1]}">')
+                    file_out.write(f"</th>")
+                    file_out.write(f"</tr>")
+
 
         file_out.write("</table>")
-        for name_items in items_name_list:
-            for name_picture in os.listdir(os.path.join(home,"Image")):
-                print(f"{name_items}  {name_picture}  {name_items is name_picture}")
-                name_items = name_items.replace('/', '')
-                name_items = name_items.replace('\\', '')
-                if name_items in name_picture:
-                    file_out.write("<body>")
-                    file_out.write(f'<img src = "{os.path.join(home, "Image", name_picture)}" height="420 width="420">')
-                    file_out.write("</body>")
-                    print(f"inserisoc immagine {os.path.join(home, 'Image', name_picture)}")
 
 
     print(ordine_dizionario['Order #'])
@@ -148,15 +150,15 @@ def main():
     for file in os.listdir(directori):
         if file.endswith(".csv"):
             primitive_data = pd.read_csv(os.path.join(directori,file,))
-            dati, header, items = read_cvs_diveideOrder(primitive_data, home)
+            dati, header, items, image_size = read_cvs_diveideOrder(primitive_data, home)
             #print(dati)
             i = 0
             for ordine in dati:
                 dizionario = scrivi_dizinario(ordine, header, items)
-                scrivi_file_html(ordine_dizionario=dizionario, home = home,  header= header, items = items)
+                scrivi_file_html(ordine_dizionario=dizionario, home = home,  header= header, items = items ,image_size = image_size)
                 #scrivi_file_csv(dizionario, i, home)
                 i += 1
-        print("yes, I do it")
+        print("yes, I did it")
 
 if __name__ == "__main__":
     main()
