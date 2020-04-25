@@ -64,8 +64,9 @@ def scrivi_file_html(ordine_dizionario = None, home = None, header = [], items =
     file_pdf = os.path.join(home,"Pdf"
                              , f"order{ordine_dizionario['Order #']}.pdf")
     with open(file_html, mode='w') as file_out:
+
         file_out.write(f"<table border=1>")
-#STAMPA L'EADE
+#STAMPA HEADER
         for name in header:
             file_out.write(f"""
             <tr>
@@ -84,6 +85,8 @@ def scrivi_file_html(ordine_dizionario = None, home = None, header = [], items =
                             """)
         file_out.write(f"</tr>")
 
+        items_name_list = []
+
         for index, row in ordine_dizionario["Items"].iterrows():
             file_out.write(f"<tr>")
             for name in items:
@@ -100,8 +103,23 @@ def scrivi_file_html(ordine_dizionario = None, home = None, header = [], items =
                                 <th> {row["Notes to Seller"]} </th>
                                 """)
                 file_out.write(f"</tr>")
+            if  row["Item's Name"] not in  items_name_list:
+                items_name_list.append(row["Item's Name"])
 
         file_out.write("</table>")
+        for name_items in items_name_list:
+            for name_picture in os.listdir(os.path.join(home,"Image")):
+                print(f"{name_items}  {name_picture}  {name_items is name_picture}")
+                name_items = name_items.replace('/', '')
+                name_items = name_items.replace('\\', '')
+                if name_items in name_picture:
+                    file_out.write("<body>")
+                    file_out.write(f'<img src = "{os.path.join(home, "Image", name_picture)}" height="420 width="420">')
+                    file_out.write("</body>")
+                    print(f"inserisoc immagine {os.path.join(home, 'Image', name_picture)}")
+
+
+    print(ordine_dizionario['Order #'])
     pdfkit.from_file(file_html, file_pdf)
 
 
@@ -121,9 +139,9 @@ def main():
         os.makedirs(os.path.join(home, "Input"))
         print("input")
 
-    if not os.path.exists(os.path.join(home, "Imange")):
-        os.makedirs(os.path.join(home, "Imange"))
-        print("Imange")
+    if not os.path.exists(os.path.join(home, "Image")):
+        os.makedirs(os.path.join(home, "Image"))
+        print("Image")
 
     directori = os.path.join(home, "Input")
 
