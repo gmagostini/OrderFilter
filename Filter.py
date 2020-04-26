@@ -6,6 +6,7 @@ import pdfkit
 import json
 
 class Filter():
+
     def read_cvs_diveideOrder(self,primitive_data, home):
         column_name = {}
         header = []
@@ -127,7 +128,9 @@ class Filter():
 
 
 
-    def main(self):
+    def start_filter(self, file_list = []):
+        self. file_list_local = file_list
+        print(self. file_list_local)
         home = os.path.dirname(os.path.realpath(__file__))
         if not os.path.exists(os.path.join(home, "Pdf")):
             os.makedirs(os.path.join(home, "Pdf"))
@@ -147,9 +150,9 @@ class Filter():
 
         directori = os.path.join(home, "Input")
 
-        for file in os.listdir(directori):
+        for file in self. file_list_local:
             if file.endswith(".csv"):
-                primitive_data = pd.read_csv(os.path.join(directori,file,))
+                primitive_data = pd.read_csv(file)
                 dati, header, items, image_size = self.read_cvs_diveideOrder(primitive_data, home)
                 #print(dati)
                 i = 0
