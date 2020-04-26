@@ -46,7 +46,6 @@ class Filter():
         elenco_ordini_ragruppati = []
         for i in ordini_indice:
             elenco_ordini_ragruppati.append(refind_data[refind_data["Order #"] == i])
-
         return elenco_ordini_ragruppati, header_ref, item_ref ,image_size
 
     def scrivi_dizinario(self,elenco_ordini_ragruppati, header, items):
@@ -81,22 +80,47 @@ class Filter():
     #STAMPA GLI ITEMS
             file_out.write(f"<tr>")
             for name in items:
-                if name != "Notes to Seller":
+                if name != "Notes to Seller" and name != "Item's Name":
                     file_out.write(f"""
                                     <th> {name} </th>
                                 """)
-            file_out.write(f"</tr>")
+                elif name == "Item's Name":
+                    file_out.write(f"""
+                                    <th> Item's Name </th>
+                                    """)
 
+                    file_out.write(f"""
+                                    <th> Image </th>
+                                    """)
+            file_out.write(f"</tr>")
             items_name_list = []
 
             for index, row in ordine_dizionario["Items"].iterrows():
                 file_out.write(f"<tr>")
                 for name in items:
-                    if name != "Notes to Seller":
+                    if name != "Notes to Seller" and name != "Item's Name" and name != "Item's Variant":
                         file_out.write(f"""
                                     <th> {row[name]} </th>
                                     """)
-
+                    elif name == "Item's Name":
+                        file_out.write(f"""
+                                        <th> {row["Item's Name"]} </th>
+                                        """)
+                        name_items = row["Item's Name"]
+                        name_items = name_items.replace('/', '')
+                        for name_picture in os.listdir(os.path.join(home, "Image")):
+                            if name_items in name_picture:
+                                name_picture = os.path.join(home, "Image", name_picture)
+                                print(f"inserisoc immagine {os.path.join(home, 'Image', name_picture)}")
+                                file_out.write(f"<th>")
+                                file_out.write(
+                                    f'<img src = "{name_picture}" height="{image_size[0]} width="{image_size[1]}">')
+                                file_out.write(f"</th>")
+                    elif name == "Item's Variant":
+                        temp = row["Item's Variant"].replace("|", "<br>")
+                        file_out.write(f"""
+                                        <th><h2> {temp} </h2></th>
+                                        """)
                 file_out.write(f"</tr>")
                 if str(row["Notes to Seller"]) != 'nan':
                     file_out.write(f"<tr>")
@@ -105,18 +129,8 @@ class Filter():
                                     <th> {row["Notes to Seller"]} </th>
                                     """)
                     file_out.write(f"</tr>")
-                name_items = row["Item's Name"]
-                name_items = name_items.replace('/', '')
-                for name_picture in os.listdir(os.path.join(home,"Image")):
-                    if name_items in name_picture:
-                        name_picture = os.path.join(home,"Image", name_picture)
-                        print(f"inserisoc immagine {os.path.join(home, 'Image', name_picture)}")
-                        file_out.write(f"<tr>")
-                        file_out.write(f"<th></th>")
-                        file_out.write(f"<th>")
-                        file_out.write(f'<img src = "{name_picture}" height="{image_size[0]} width="{image_size[1]}">')
-                        file_out.write(f"</th>")
-                        file_out.write(f"</tr>")
+
+
 
 
             file_out.write("</table>")
