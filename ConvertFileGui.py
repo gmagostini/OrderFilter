@@ -1,5 +1,6 @@
 import os
 import subprocess
+import time
 from functools import partial
 import platform
 
@@ -16,7 +17,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from Filter import Filter
-
+from multiprocessing import Process
 
 class MyLabel(Label):
     def on_touch_down(self, touch):
@@ -41,12 +42,14 @@ class ConertFileGui(App):
         self.cornicie.add_widget(self.finsestra)
         self.menu = BoxLayout(orientation = "horizontal")
         self.load_file = Button(text = "load file", size = (200,40), size_hint = (None, None) )
-        self.load_file.bind(on_press = self.extract_order)
+        self.load_file.bind(on_press =partial(self.extract_order, self.load_file))
         self.html = Button(text = "HTML", size = (200,40), size_hint = (None, None) )
         self.pdf = Button(text="pdf", size=(200, 40), size_hint=(None, None))
+        self.state_labe = Label(text = "READY", size=(200, 40), size_hint=(None, None))
         self.menu.add_widget(self.load_file)
         self.menu.add_widget(self.html)
         self.menu.add_widget(self.pdf)
+        self.menu.add_widget(self.state_labe)
         self.pdf.bind(on_press = self.open_pdf_directory)
         self.cornicie.add_widget(self.menu)
         return self.cornicie
@@ -103,9 +106,10 @@ class ConertFileGui(App):
         self.lista_file.remove(riga.cartello.text)
         self.finsestra.remove_widget(riga)
 
-    def extract_order(self,value):
+    def extract_order(self,value, pulsante):
         print("start")
         self.filtro.start_filter(file_list= self.lista_file)
+
 
     def open_pdf_directory (self):
         path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"pdf")

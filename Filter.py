@@ -90,7 +90,7 @@ class Filter():
                                     """)
 
                     file_out.write(f"""
-                                    <th> Image </th>
+                                    <th> cavolini giallli e blu </th>
                                     """)
             file_out.write(f"</tr>")
             items_name_list = []
