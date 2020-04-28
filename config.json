@@ -11,8 +11,8 @@
   ],
   "items" : [
     "Item's Name",
-    "Image",
     "Item's Variant",
+    "Image",
     "Qty",
     "Notes to Seller",
     "Weight"

@@ -4,8 +4,10 @@ import pandas as pd
 
 import pdfkit
 import json
-
+#from ConvertFileGui import ConertFileGui
+from kivy.app import App
 class Filter():
+    file_list_global = []
 
     def read_cvs_diveideOrder(self,primitive_data, home):
         column_name = {}
@@ -80,17 +82,17 @@ class Filter():
     #STAMPA GLI ITEMS
             file_out.write(f"<tr>")
             for name in items:
-                if name != "Notes to Seller" and name != "Item's Name":
+                if name != "Notes to Seller" and name != "Item's Variant":
                     file_out.write(f"""
                                     <th> {name} </th>
                                 """)
-                elif name == "Item's Name":
+                elif name == "Item's Variant":
                     file_out.write(f"""
-                                    <th> Item's Name </th>
+                                    <th> Item's Variant </th>
                                     """)
 
                     file_out.write(f"""
-                                    <th> cavolini giallli e blu </th>
+                                    <th> Image </th>
                                     """)
             file_out.write(f"</tr>")
             items_name_list = []
@@ -98,14 +100,16 @@ class Filter():
             for index, row in ordine_dizionario["Items"].iterrows():
                 file_out.write(f"<tr>")
                 for name in items:
-                    if name != "Notes to Seller" and name != "Item's Name" and name != "Item's Variant":
+                    if name != "Notes to Seller" and name != "Item's Variant":
                         file_out.write(f"""
-                                    <th> {row[name]} </th>
+                                    <th style="text-align:left" > {row[name]} </th>
                                     """)
-                    elif name == "Item's Name":
+                    elif name == "Item's Variant":
+                        temp = row["Item's Variant"].replace("|", "<br>")
                         file_out.write(f"""
-                                        <th> {row["Item's Name"]} </th>
+                                        <th style="text-align:left" ><h2>  {temp} </h2></th>
                                         """)
+
                         name_items = row["Item's Name"]
                         name_items = name_items.replace('/', '')
                         for name_picture in os.listdir(os.path.join(home, "Image")):
@@ -116,11 +120,8 @@ class Filter():
                                 file_out.write(
                                     f'<img src = "{name_picture}" height="{image_size[0]} width="{image_size[1]}">')
                                 file_out.write(f"</th>")
-                    elif name == "Item's Variant":
-                        temp = row["Item's Variant"].replace("|", "<br>")
-                        file_out.write(f"""
-                                        <th><h2> {temp} </h2></th>
-                                        """)
+
+
                 file_out.write(f"</tr>")
                 if str(row["Notes to Seller"]) != 'nan':
                     file_out.write(f"<tr>")
@@ -142,9 +143,17 @@ class Filter():
 
 
 
-    def start_filter(self, file_list = []):
-        self. file_list_local = file_list
-        print(self. file_list_local)
+    def start_filter(self, _file_list = []):
+        self. file_list_local = _file_list
+        self.file_list_using = []
+
+        if self. file_list_local == []:
+            self.file_list_using = self.file_list_global
+        else:
+            self.file_list_using = self.file_list_local
+
+
+        print(self. file_list_using)
         home = os.path.dirname(os.path.realpath(__file__))
         if not os.path.exists(os.path.join(home, "Pdf")):
             os.makedirs(os.path.join(home, "Pdf"))
@@ -164,7 +173,7 @@ class Filter():
 
         directori = os.path.join(home, "Input")
 
-        for file in self. file_list_local:
+        for file in self. file_list_using:
             if file.endswith(".csv"):
                 primitive_data = pd.read_csv(file)
                 dati, header, items, image_size = self.read_cvs_diveideOrder(primitive_data, home)

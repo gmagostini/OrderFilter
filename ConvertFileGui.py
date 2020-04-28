@@ -6,7 +6,7 @@ import platform
 
 from kivy.app import App
 from kivy.config import Config
-from kivy.core.window import Window
+
 from kivy.graphics.instructions import Canvas
 from kivy.graphics.vertex_instructions import Rectangle
 from kivy.uix.filechooser import FileChooserListView
@@ -17,7 +17,13 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from Filter import Filter
-from multiprocessing import Process
+from multiprocessing import Process, freeze_support, active_children
+
+from threading import Thread
+
+if __name__ == '__main__':
+	freeze_support()
+
 
 class MyLabel(Label):
     def on_touch_down(self, touch):
@@ -32,17 +38,19 @@ class ConertFileGui(App):
     finsestra = None
     lista_file = []
     filtro = Filter()
-
+    Window_create = False
     def build(self):
         Config.set('graphics', 'resizable', 0)
-        Window.size = (800, 800)
+        if self.Window_create is False:
+            from kivy.core.window import Window
+            self.Window_create = True
         Window.bind(on_dropfile=self._on_file_drop)
         self.cornicie = GridLayout(cols = 1, spacing = 10 )
         self.finsestra = self.ad_finestra()
         self.cornicie.add_widget(self.finsestra)
         self.menu = BoxLayout(orientation = "horizontal")
         self.load_file = Button(text = "load file", size = (200,40), size_hint = (None, None) )
-        self.load_file.bind(on_press =partial(self.extract_order, self.load_file))
+
         self.html = Button(text = "HTML", size = (200,40), size_hint = (None, None) )
         self.pdf = Button(text="pdf", size=(200, 40), size_hint=(None, None))
         self.state_labe = Label(text = "READY", size=(200, 40), size_hint=(None, None))
@@ -52,6 +60,7 @@ class ConertFileGui(App):
         self.menu.add_widget(self.state_labe)
         self.pdf.bind(on_press = self.open_pdf_directory)
         self.cornicie.add_widget(self.menu)
+        self.load_file.bind(on_press =partial(self.extract_order))
         return self.cornicie
 
 
@@ -106,9 +115,32 @@ class ConertFileGui(App):
         self.lista_file.remove(riga.cartello.text)
         self.finsestra.remove_widget(riga)
 
-    def extract_order(self,value, pulsante):
+    def extract_order(self,value):
         print("start")
-        self.filtro.start_filter(file_list= self.lista_file)
+        self.filtro.file_list_global = self.lista_file
+        #self.filtro.start_filter(_file_list= self.lista_file)
+        #Process(target=self.filtro.start_filter).start()
+        t1 = Thread(target= self.on_workin)
+        t1.start()
+        t1.join()
+
+
+        t2 = Thread(target= self.filtro.start_filter)
+        t2.start()
+        t2.join()
+
+        t1 = Thread(target=self.on_ready)
+        t1.start()
+        t1.join()
+
+    def on_workin(self):
+        self.load_file.disabled = True
+        self.state_labe = "Working"
+
+    def on_ready(self):
+        time.sleep(15)
+        self.load_file.disabled = False
+        self.state_labe = "Ready"
 
 
     def open_pdf_directory (self):
@@ -130,4 +162,5 @@ class ConertFileGui(App):
             subprocess.Popen(["xdg-open", path])
 
 if __name__ == "__main__":
+
     ConertFileGui().run()
