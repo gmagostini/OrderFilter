@@ -133,8 +133,6 @@ class ConertFileGui(App):
         t2.start()
         #t2.join()
 
-
-
         t3 = Thread(target=self.on_ready)
         t3.start()
         #t3.join()

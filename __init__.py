@@ -1,4 +1,5 @@
-from OrderFilter.ConvertFileGui import ConertFileGui
+from ConvertFileGui import ConertFileGui
 
 
-ConvertFileGui.run()
+questo =ConertFileGui()
+questo.run()
