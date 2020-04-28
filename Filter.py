@@ -4,11 +4,12 @@ import pandas as pd
 
 import pdfkit
 import json
+from queue import Queue
 #from ConvertFileGui import ConertFileGui
 from kivy.app import App
 class Filter():
     file_list_global = []
-
+    working = False
     def read_cvs_diveideOrder(self,primitive_data, home):
         column_name = {}
         header = []
@@ -94,6 +95,7 @@ class Filter():
                     file_out.write(f"""
                                     <th> Image </th>
                                     """)
+
             file_out.write(f"</tr>")
             items_name_list = []
 
@@ -144,6 +146,7 @@ class Filter():
 
 
     def start_filter(self, _file_list = []):
+        self.working = True
         self. file_list_local = _file_list
         self.file_list_using = []
 
@@ -185,3 +188,5 @@ class Filter():
                     #scrivi_file_csv(dizionario, i, home)
                     i += 1
             print("yes, I did it")
+
+        self.working = False

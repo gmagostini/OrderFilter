@@ -19,6 +19,7 @@ from kivy.uix.textinput import TextInput
 from Filter import Filter
 from multiprocessing import Process, freeze_support, active_children
 
+from queue import Queue
 from threading import Thread
 
 if __name__ == '__main__':
@@ -116,22 +117,27 @@ class ConertFileGui(App):
         self.finsestra.remove_widget(riga)
 
     def extract_order(self,value):
+        _quee = Queue()
+        print()
         print("start")
         self.filtro.file_list_global = self.lista_file
         #self.filtro.start_filter(_file_list= self.lista_file)
         #Process(target=self.filtro.start_filter).start()
+
+
         t1 = Thread(target= self.on_workin)
         t1.start()
-        t1.join()
-
+        #t1.join()
 
         t2 = Thread(target= self.filtro.start_filter)
         t2.start()
-        t2.join()
+        #t2.join()
 
-        t1 = Thread(target=self.on_ready)
-        t1.start()
-        t1.join()
+
+
+        t3 = Thread(target=self.on_ready)
+        t3.start()
+        #t3.join()
 
     def on_workin(self):
         self.load_file.disabled = True
