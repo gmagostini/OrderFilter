@@ -61,7 +61,7 @@ class Filter():
         refind_data["Reparto"] = None
         refind_data["N# sostegni"] = 0
         for index, row in refind_data.iterrows():
-
+            print(row)
             if row["Item's Name"] in tabella_prodotti["Modello"].to_list():
                 refind_data.loc[index,"Material"] = tabella_prodotti[tabella_prodotti["Modello"] == row["Item's Name"]]["Materiale schrmo"].iloc[0]
                 refind_data.loc[index, "Reparto"] = tabella_prodotti[tabella_prodotti["Modello"] == row["Item's Name"]]["Reparto"].iloc[0]
@@ -90,7 +90,7 @@ class Filter():
 
         #print(f"elsenco degli ordini raffinati: \n{elenco_ordini_ragruppati}")
 
-        return elenco_ordini_ragruppati, header_ref, item_ref ,image_size
+        return elenco_ordini_ragruppati, header_ref, item_ref ,image_size, tabella_prodotti
 
 
 
@@ -105,7 +105,7 @@ class Filter():
         return ordine_dizionario
 
 
-    def scrivi_file_html(self,ordine_dizionario = None, home = None, header = [], items = [], image_size =[80,80] ):
+    def scrivi_file_html(self,ordine_dizionario = None, home = None, header = [], items = [], image_size =[80,80] ,tabella_prodotti = pd.DataFrame):
 
         file_html = os.path.join(home,"html"
                                  , f"order{ordine_dizionario['Order #']}.html")
@@ -113,7 +113,7 @@ class Filter():
                                  , f"order{ordine_dizionario['Order #']}.pdf")
 
 
-
+        print(ordine_dizionario)
         with open(file_html, mode='w') as file_out:
 
             file_out.write(f"<table border=1>")
@@ -129,6 +129,9 @@ class Filter():
 
     #STAMPA GLI ITEMS
             file_out.write(f"<tr>")
+
+
+
             for name in items:
                 if name != "Notes to Seller" and name != "Item's Variant":
                     file_out.write(f"""
@@ -159,7 +162,8 @@ class Filter():
                                         <th style="text-align:left" ><h2>  {temp} </h2></th>
                                         """)
 
-                        self.load_image(row,file_out,home,image_size)
+
+                    self.load_image(row,file_out,home,image_size)
 
 
 
@@ -172,6 +176,14 @@ class Filter():
                                     """)
                     file_out.write(f"</tr>")
 
+                if row["Item's Name"] in tabella_prodotti["Modello"].to_list() and tabella_prodotti.loc[
+                    tabella_prodotti["Modello"] == row["Item's Name"], "Materiale schrmo"].iloc[0] == "Vetro":
+                    file_out.write("""
+                    <tr>
+                        <th></th>
+                        <th> <h3>ordine vetro: [    ] </h3> </th>
+                    </tr>
+                    """)
 
 
 
@@ -375,7 +387,7 @@ class Filter():
             if file.endswith(".csv"):
 
                 #legge i dati graezzi dal gile .csv dell ordine e gli lavora in modo che restino solo le colonne
-                dati, header, items, image_size = self.read_cvs_diveideOrder(pd.read_csv(file), home)
+                dati, header, items, image_size,tabella_prodotti = self.read_cvs_diveideOrder(pd.read_csv(file), home)
                 #print(dati)
                 i = 0
                 #itera tra i singoli ordini
@@ -383,7 +395,7 @@ class Filter():
                     self.scrive_wood_and_stone(home,ordine)
                     #crea un dizionario con i singoli ordini con header e tabella items
                     dizionario = self.scrivi_dizinario(ordine, header, items)
-                    self.scrivi_file_html(ordine_dizionario=dizionario, home = home,  header= header, items = items ,image_size = image_size)
+                    self.scrivi_file_html(ordine_dizionario=dizionario, home = home,  header= header, items = items ,image_size = image_size,tabella_prodotti= tabella_prodotti)
                     #scrivi_file_csv(dizionario, i, home)
                     i += 1
             print("yes, I did it")
