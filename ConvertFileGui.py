@@ -4,6 +4,8 @@ import time
 from functools import partial
 import platform
 
+import kivy
+kivy.require('1.9.0')
 from kivy.app import App
 from kivy.config import Config
 
@@ -16,6 +18,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+from kivy.graphics import Color, Rectangle
+
+
+
 from Filter import Filter
 from multiprocessing import Process, freeze_support, active_children
 
@@ -35,18 +41,21 @@ class MyLabel(Label):
 
 
 
-class ConertFileGui(App):
+class ConertFileGuiApp(App):
     finsestra = None
     lista_file = []
     filtro = Filter()
     Window_create = False
     def build(self):
-        Config.set('graphics', 'resizable', 0)
+        Config.set('graphics', 'resizable', True)
+        Config.set('graphics', 'width', '800')
+        Config.set('graphics', 'height', '800')
         if self.Window_create is False:
             from kivy.core.window import Window
             self.Window_create = True
         Window.bind(on_dropfile=self._on_file_drop)
         self.cornicie = GridLayout(cols = 1, spacing = 10 )
+
         self.finsestra = self.ad_finestra()
         self.cornicie.add_widget(self.finsestra)
         self.menu = BoxLayout(orientation = "horizontal")
@@ -60,9 +69,16 @@ class ConertFileGui(App):
         self.menu.add_widget(self.pdf)
         self.menu.add_widget(self.state_labe)
         self.pdf.bind(on_press = self.open_pdf_directory)
+        self.html.bind(on_press= self.open_html_directory)
         self.cornicie.add_widget(self.menu)
         self.load_file.bind(on_press =partial(self.extract_order))
+        self.output = Label( halign="left", valign="top",size=(400, 400), size_hint=(None, None))
+        self.output.text_size = self.output.size
+        self.finestra_out = self.ad_finestra()
+        self.cornicie.add_widget(self.finestra_out)
+        self.finestra_out.add_widget(self.output)
         return self.cornicie
+
 
 
 
@@ -71,8 +87,9 @@ class ConertFileGui(App):
         finsestra = GridLayout()
         finsestra.cols = 1
         finsestra.spacing = 10
-        finsestra.size = (800,380)
+        finsestra.size = (200,400)
         finsestra.size_hint = (None, None)
+        finsestra.pos = 0, self.cornicie.height - 100
         return finsestra
 
     def ad_file_name(self, name, finestra):
@@ -124,30 +141,48 @@ class ConertFileGui(App):
         #self.filtro.start_filter(_file_list= self.lista_file)
         #Process(target=self.filtro.start_filter).start()
 
-
-        t1 = Thread(target= self.on_workin)
-        t1.start()
+        #t1 = Thread(target= self.on_workin)
+        #t1.start()
         #t1.join()
 
-        t2 = Thread(target= self.filtro.start_filter)
-        t2.start()
+        #t2 = Thread(target= self.filtro.start_filter)
+        #t2.start()
         #t2.join()
 
-        t3 = Thread(target=self.on_ready)
-        t3.start()
+        #t3 = Thread(target=self.on_ready)
+        #t3.start()
         #t3.join()
 
+        t0 = Thread(target=self.processo_parallo)
+        t0.start()
+        #t0.join()
+
+
+        #t4 = Thread(target=self.read_log)
+        #t4.start()
+        #t4.join()
+    def processo_parallo(self):
+        self.on_workin()
+        self.filtro.start_filter()
+        self.on_ready()
+        self.read_log()
+
     def on_workin(self):
+        self.state_labe.text = "Working"
         self.load_file.disabled = True
-        self.state_labe = "Working"
 
     def on_ready(self):
-        time.sleep(15)
+
         self.load_file.disabled = False
-        self.state_labe = "Ready"
+        self.state_labe.text = "Ready"
+
+    def read_log(self):
+        with open("log.txt", mode="r") as log:
+            self.output.text = log.read()
 
 
-    def open_pdf_directory (self):
+
+    def open_pdf_directory (self, value):
         path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"pdf")
         if platform.system() == "Windows":
             os.startfile(path)
@@ -156,15 +191,9 @@ class ConertFileGui(App):
         else:
             subprocess.Popen(["xdg-open", path])
 
-    def open_pdf_directory (self):
-        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"pdf")
-        if platform.system() == "Windows":
-            os.startfile(path)
-        elif platform.system() == "Darwin":
-            subprocess.Popen(["open", path])
-        else:
-            subprocess.Popen(["xdg-open", path])
+    def open_html_directory (self,value):
+        self.filtro.leggi_tabella_prodotti()
 
 if __name__ == "__main__":
 
-    ConertFileGui().run()
+    ConertFileGuiApp().run()

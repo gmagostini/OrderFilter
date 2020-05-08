@@ -1,5 +1,5 @@
-from ConvertFileGui import ConertFileGui
+from ConvertFileGui import ConertFileGuiApp
 
 
-questo =ConertFileGui()
+questo =ConertFileGuiApp()
 questo.run()
