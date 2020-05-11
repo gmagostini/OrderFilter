@@ -157,15 +157,24 @@ class Filter():
                                     <th style="text-align:left" > {row[name]} </th>
                                     """)
                     elif name == "Item's Variant":
-                        temp = row["Item's Variant"].replace("|", "<br>")
+                        temp = str(row["Item's Variant"]).replace("|", "<br>")
                         file_out.write(f"""
                                         <th style="text-align:left" ><h2>  {temp} </h2></th>
                                         """)
 
 
-                    self.load_image(row,file_out,home,image_size)
+                        #self.load_image(row,file_out,home,image_size)
 
-
+                        name_items = row["Item's Name"]
+                        name_items = name_items.replace('/', '')
+                        for name_picture in os.listdir(os.path.join(home, "Image")):
+                            if name_items in name_picture:
+                                name_picture = os.path.join(home, "Image", name_picture)
+                                print(f"inserisoc immagine {os.path.join(home, 'Image', name_picture)}")
+                                file_out.write(f"<th>")
+                                file_out.write(
+                                    f'<img src = "{name_picture}" height="{image_size[0]} width="{image_size[1]}">')
+                                file_out.write(f"</th>")
 
                 file_out.write(f"</tr>")
                 if str(row["Notes to Seller"]) != 'nan':
@@ -334,11 +343,11 @@ class Filter():
 
         name_items = row["Item's Name"]
         name_items = name_items.replace('/', '')
-        logging.info(f'{os.listdir(os.path.join(home, "Product", "Image"))}')
-        for name_picture in os.listdir(os.path.join(home, "Product", "Image")):
+        logging.info(f'{os.listdir(os.path.join(home, "Image"))}')
+        for name_picture in os.listdir(os.path.join(home, "Image")):
             if name_items in name_picture:
-                name_picture = os.path.join(home, "Product", "Image", name_picture)
-                print(f"inserisoc immagine {os.path.join(home,'Product', 'Image', name_picture)}")
+                name_picture = os.path.join(home, "Image", name_picture)
+                print(f"inserisoc immagine {os.path.join(home, 'Image', name_picture)}")
                 file_out.write(f"<th>")
                 file_out.write(
                     f'<img src = "{name_picture}" height="{image_size[0]} width="{image_size[1]}">')
@@ -377,8 +386,8 @@ class Filter():
             os.makedirs(os.path.join(home, "Product"))
             print("Image")
 
-        if not os.path.exists(os.path.join(home,"Product", "Image")):
-            os.makedirs(os.path.join(home,"Product", "Image"))
+        if not os.path.exists(os.path.join(home, "Image")):
+            os.makedirs(os.path.join(home, "Image"))
             print("Image")
 
         directori = os.path.join(home, "Input")
@@ -392,7 +401,7 @@ class Filter():
                 i = 0
                 #itera tra i singoli ordini
                 for ordine in dati:
-                    self.scrive_wood_and_stone(home,ordine)
+                    #self.scrive_wood_and_stone(home,ordine)
                     #crea un dizionario con i singoli ordini con header e tabella items
                     dizionario = self.scrivi_dizinario(ordine, header, items)
                     self.scrivi_file_html(ordine_dizionario=dizionario, home = home,  header= header, items = items ,image_size = image_size,tabella_prodotti= tabella_prodotti)

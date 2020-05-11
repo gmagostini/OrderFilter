@@ -22,7 +22,7 @@ from kivy.graphics import Color, Rectangle
 
 
 
-from Filter import Filter
+from OrderFilter.Filter import Filter
 from multiprocessing import Process, freeze_support, active_children
 
 from queue import Queue
