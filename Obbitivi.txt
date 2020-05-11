@@ -1,0 +1,28 @@
+Cosa serve:
+- 3 pdf in output.
+
+PDF 1:
+- gi� creato
+- cambiare immagini (Faccio io)
+- AGGIUNTE:
+	- (se c'� vetro) spunta per verifica dell'ordine del vetro e inserimento della datra di quando � stato fatto
+
+
+PDF 2:
+- Immagine per la costruzione dei pezzi in falegnameria
+- Dettagli legati al modello:
+	- quantit� di pezzi
+
+- (se c'� policarbonato) Dettagli dimensione schermo in policarbonato.
+			Altezza schermo: togliere 5 cm
+
+
+PDF 3:
+- Immagine per la costruzione dei pezzi nel reparto piera
+- Dettagli legati al modello:
+	- quantit� di pezzi
+
+
+NB: non necessariamente escono 3 pdf, ma escono in base a dove servono...
+Esempio:
+Un ordine di supporti solo in legno non avr� un pdf per il reparto pietra.

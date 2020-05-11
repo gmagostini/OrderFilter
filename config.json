@@ -1,0 +1,21 @@
+{
+  "header" : [
+    "Order #",
+    "Date",
+    "Billing Customer",
+    "Billing Street Name&Number",
+    "Delivery Company Name",
+    "Buyer's Phone #",
+    "Shipping Label",
+    "Buyer's Email"
+  ],
+  "items" : [
+    "Item's Name",
+    "Item's Variant",
+    "Image",
+    "Qty",
+    "Notes to Seller",
+    "Weight"
+  ],
+  "image_size" : [200, 200]
+}

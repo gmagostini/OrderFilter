@@ -1,0 +1,60 @@
+Modello,Materiale schrmo,N# sostegni,Reparto,Stacco da terrra
+Covid Hair PB-P,Plexiglass,2,None,5
+Covid Hair PA-P,Plexiglass,2,None,5
+Covid Rist MA-V-P,Plexiglass,2,None,5
+Covid Rist MT-M-P,Plexiglass,2,None,5
+Covid Rist MA-M-P,Plexiglass,2,None,5
+Covid Rist MT-V-P,Plexiglass,2,None,5
+Covid Hair SA-P,Plexiglass,1,S,5
+Covid Hair SB-P,Plexiglass,1,S,5
+Covid Wood 15/15 W-P,Plexiglass,2,W,5
+Covid Wood 20/15 WGI-P,Plexiglass,2,W,5
+Covid Wood 20/15 WGC-P,Plexiglass,2,W,5
+Covid Wood 10/10 WI-P,Plexiglass,2,W,5
+Covid Wood 15/15 WC-P,Plexiglass,2,W,5
+Covid Stone 15/15 ST-P,Plexiglass,2,S,5
+Covid Stone 15/15 SF-P,Plexiglass,1,S,5
+Covid Stone 15/15 SL-P,Plexiglass,1,S,5
+Covid Stone 10/10 ST-P,Plexiglass,2,S,5
+Covid Stone 10/5 ST-P,Plexiglass,2,S,5
+Covid Stone 15/15 LF-P,Plexiglass,2,W,5
+Covid Stone 10/10 SC-P,Plexiglass,2,S,5
+,,,,5
+Covid Stone 15/15 ST-EX,Vetro,2,S,5
+Covid XL Stone  15/15 ST-TRE,Vetro,3,S,5
+Covid Stone 10/10 ST-EX,Vetro,2,S,5
+Covid XL Stone  10/10 ST-TRE,Vetro,3,S,5
+Covid Stone 10/5 ST-EX,Vetro,2,S,5
+Covid XL Stone  10/5 ST-TRE,Vetro,3,S,5
+Covid Stone 15/15 SWF-EX,Vetro,1,S,5
+Covid Stone 15/15 SWL-EX,Vetro,1,S,5
+Covid Stone 10/10 SC-EX,Vetro,In base alla lunghezza,S,5
+Covid Rist 15/15 L2-EX,Vetro,In base alla lunghezza,None,5
+Covid Rist IT-V-EX,Vetro,2,None,5
+Covid Rist IT-M-EX,Vetro,2,None,5
+Covid Rist IA-M-EX,Vetro,2,None,5
+Covid Rist IA-V-EX,Vetro,2,None,5
+Covid Nails MAN-EX,Vetro,2,None,5
+Covid Wood 20/15 WGI-EX,Vetro,2,W,5
+Covid Wood 20/15 WG-EX,Vetro,2,W,5
+Covid Wood 15/15 W-EX,Vetro,2,W,5
+Covid Wood 10/25 WC-EX,Vetro,2,W,5
+Covid XL Wood 15/15 W-EX-TRE,Vetro,3,W,5
+Covid XL Wood 10/25 WC-EX-TRE,Vetro,3,W,5
+Covid XL Wood 20/15 WG-TRE,Vetro,3,W,5
+Covid XL Wood 20/15 WT-TRE,Vetro,3,W,5
+,,,,5
+Block 15/15 W,None,1,W,5
+Block WC,None,1,W,5
+Block 20/15 WGC,None,1,W,5
+Block 20/15 WGI,None,1,W,5
+Block SA,None,1,S,5
+Block SB,None,1,S,5
+Block 15/8 L2,None,1,None,5
+Block 15/15 L2,None,1,None,5
+Block 15/15 L,None,1,None,5
+Block 15/15 F,None,1,None,5
+Block 10/10 C,None,1,None,5
+Block 10/10 T,None,1,None,5
+Block 10/5 T,None,1,None,5
+Block 15/15 T,None,1,None,5
